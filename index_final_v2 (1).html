@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Отзывы и обратная связь о Telegram-боте Шеф-ИИ / ИИ-Повар">
+<title>Отзывы — Шеф-ИИ</title>
+
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+:root{
+    --orange:#ff7a18;
+    --orange2:#ff9f43;
+    --green:#25b864;
+    --text:#171717;
+    --muted:#727272;
+    --line:#e9e9e9;
+    --surface:rgba(255,255,255,.88);
+    --shadow:0 30px 80px rgba(25,25,25,.12);
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    min-height:100vh;
+    padding:28px 18px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+    background:
+        radial-gradient(circle at 8% 12%,rgba(255,122,24,.20),transparent 28%),
+        radial-gradient(circle at 92% 85%,rgba(37,184,100,.16),transparent 30%),
+        linear-gradient(135deg,#fff8f0 0%,#fff 48%,#f3fff7 100%);
+    overflow-x:hidden;
+}
+
+body::before,
+body::after{
+    content:"";
+    position:fixed;
+    width:280px;
+    height:280px;
+    border-radius:50%;
+    filter:blur(4px);
+    pointer-events:none;
+    z-index:-1;
+}
+
+body::before{
+    top:-150px;
+    right:-100px;
+    background:rgba(255,159,67,.13);
+}
+
+body::after{
+    bottom:-160px;
+    left:-120px;
+    background:rgba(37,184,100,.11);
+}
+
+/* ---------- LANGUAGE ---------- */
+
+.language-switcher{
+    position:fixed;
+    top:18px;
+    right:18px;
+    z-index:50;
+    display:flex;
+    gap:4px;
+    padding:5px;
+    border:1px solid rgba(255,255,255,.8);
+    border-radius:16px;
+    background:rgba(255,255,255,.78);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.lang-btn{
+    border:0;
+    border-radius:11px;
+    background:transparent;
+    color:#777;
+    padding:8px 11px;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.3px;
+    cursor:pointer;
+    transition:.22s ease;
+}
+
+.lang-btn:hover{
+    color:var(--orange);
+    transform:translateY(-1px);
+}
+
+.lang-btn.active{
+    color:#fff;
+    background:linear-gradient(135deg,var(--orange),var(--orange2));
+    box-shadow:0 5px 14px rgba(255,122,24,.25);
+}
+
+/* ---------- CARD ---------- */
+
+.card{
+    width:min(100%,760px);
+    position:relative;
+    overflow:hidden;
+    padding:42px;
+    border:1px solid rgba(255,255,255,.85);
+    border-radius:32px;
+    background:var(--surface);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    box-shadow:var(--shadow);
+    animation:cardIn .65s cubic-bezier(.2,.8,.2,1);
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    width:260px;
+    height:260px;
+    border-radius:50%;
+    top:-170px;
+    left:-100px;
+    background:rgba(255,122,24,.08);
+    pointer-events:none;
+}
+
+.card::after{
+    content:"";
+    position:absolute;
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    right:-120px;
+    bottom:-130px;
+    background:rgba(37,184,100,.08);
+    pointer-events:none;
+}
+
+.content{
+    position:relative;
+    z-index:2;
+}
+
+/* ---------- HEADER ---------- */
+
+.header{
+    text-align:center;
+    margin-bottom:32px;
+}
+
+.logo{
+    width:76px;
+    height:76px;
+    margin:0 auto 18px;
+    display:grid;
+    place-items:center;
+    border-radius:24px;
+    color:#fff;
+    font-size:31px;
+    background:linear-gradient(145deg,#ff9f43,#ff6d00);
+    box-shadow:
+        0 15px 35px rgba(255,122,24,.27),
+        inset 0 1px 0 rgba(255,255,255,.35);
+    animation:float 3.5s ease-in-out infinite;
+}
+
+.badge{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    margin-bottom:12px;
+    padding:7px 12px;
+    border-radius:999px;
+    color:#9b4b0b;
+    background:#fff1e4;
+    font-size:12px;
+    font-weight:800;
+}
+
+.badge i{
+    font-size:10px;
+}
+
+h1{
+    font-size:clamp(1.7rem,4vw,2.35rem);
+    line-height:1.15;
+    letter-spacing:-.7px;
+    margin-bottom:12px;
+}
+
+.subtitle{
+    max-width:570px;
+    margin:auto;
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.65;
+}
+
+/* ---------- FORM ---------- */
+
+.field{
+    margin-bottom:20px;
+}
+
+.contact-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:8px;
+    color:#333;
+    font-size:13px;
+    font-weight:800;
+}
+
+label i{
+    width:17px;
+    color:var(--orange);
+    text-align:center;
+}
+
+.input-wrap{
+    position:relative;
+}
+
+.input-wrap > i{
+    position:absolute;
+    left:16px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#aaa;
+    pointer-events:none;
+    transition:.22s;
+}
+
+
+.phone-wrap{
+    display:flex;
+    align-items:center;
+}
+.phone-wrap > i{
+    left:16px;
+}
+.phone-prefix{
+    position:absolute;
+    left:45px;
+    color:#555;
+    font-weight:800;
+    font-size:15px;
+    pointer-events:none;
+}
+.phone-wrap input[type="tel"]{
+    padding-left:88px;
+}
+
+input,
+textarea{
+    width:100%;
+    border:1.5px solid var(--line);
+    border-radius:15px;
+    outline:none;
+    background:#fff;
+    color:#202020;
+    font:inherit;
+    font-size:15px;
+    transition:
+        border-color .22s,
+        box-shadow .22s,
+        transform .22s,
+        background .22s;
+}
+
+input{
+    min-height:52px;
+    padding:13px 15px 13px 45px;
+}
+
+textarea{
+    min-height:145px;
+    padding:14px 15px;
+    resize:vertical;
+    line-height:1.55;
+}
+
+input::placeholder,
+textarea::placeholder{
+    color:#aaa;
+}
+
+input:hover,
+textarea:hover{
+    border-color:#d5d5d5;
+}
+
+input:focus,
+textarea:focus{
+    border-color:var(--orange);
+    background:#fff;
+    box-shadow:0 0 0 4px rgba(255,122,24,.10);
+    transform:translateY(-1px);
+}
+
+.input-wrap:focus-within > i{
+    color:var(--orange);
+}
+
+/* ---------- RATING ---------- */
+
+.rating-box{
+    padding:19px 18px 16px;
+    margin-bottom:20px;
+    border:1.5px solid #f0f0f0;
+    border-radius:18px;
+    background:linear-gradient(180deg,#fff,#fffaf5);
+}
+
+.rating-title{
+    justify-content:center;
+    margin-bottom:10px;
+}
+
+.stars{
+    display:flex;
+    justify-content:center;
+    gap:7px;
+}
+
+.star{
+    border:0;
+    background:transparent;
+    padding:0;
+    color:#d7d7d7;
+    font-size:38px;
+    line-height:1;
+    cursor:pointer;
+    transition:.18s ease;
+}
+
+.star:hover{
+    color:#ffc107;
+    transform:scale(1.14) rotate(-3deg);
+}
+
+.star.active{
+    color:#ffb300;
+    transform:scale(1.08);
+}
+
+.rating-hint{
+    min-height:18px;
+    margin-top:8px;
+    color:#999;
+    text-align:center;
+    font-size:12px;
+    font-weight:600;
+}
+
+/* ---------- CONTACT NOTE ---------- */
+
+.note{
+    display:flex;
+    align-items:flex-start;
+    gap:11px;
+    margin:-4px 0 20px;
+    padding:13px 15px;
+    border-radius:15px;
+    background:#f6fbf8;
+    color:#5c6c63;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.note i{
+    margin-top:2px;
+    color:var(--green);
+}
+
+/* ---------- ERROR ---------- */
+
+.error{
+    display:none;
+    margin:0 0 16px;
+    padding:12px 14px;
+    border-radius:13px;
+    background:#fff1f0;
+    color:#c62828;
+    text-align:center;
+    font-size:13px;
+    font-weight:700;
+    animation:shake .35s ease;
+}
+
+/* ---------- BUTTON ---------- */
+
+.submit{
+    width:100%;
+    min-height:56px;
+    border:0;
+    border-radius:16px;
+    cursor:pointer;
+    color:#fff;
+    background:linear-gradient(135deg,#ff7918,#ff9c3d);
+    font:inherit;
+    font-size:16px;
+    font-weight:850;
+    box-shadow:0 13px 28px rgba(255,122,24,.23);
+    transition:.22s ease;
+}
+
+.submit:hover{
+    transform:translateY(-2px);
+    box-shadow:0 17px 34px rgba(255,122,24,.29);
+    filter:saturate(1.05);
+}
+
+.submit:active{
+    transform:translateY(0);
+}
+
+.submit i{
+    margin-right:8px;
+}
+
+/* ---------- SUCCESS ---------- */
+
+.success{
+    display:none;
+    text-align:center;
+    animation:successIn .6s ease;
+}
+
+.success-icon{
+    width:82px;
+    height:82px;
+    margin:0 auto 19px;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    color:#fff;
+    background:linear-gradient(145deg,#2ecc71,#20a957);
+    font-size:34px;
+    box-shadow:0 15px 30px rgba(37,184,100,.22);
+}
+
+.success-message{
+    margin:0;
+    color:var(--muted);
+    font-size:17px;
+    line-height:1.7;
+    font-weight:800;
+}
+
+.contact-success{
+    display:none;
+    margin-top:12px;
+    color:var(--green);
+    font-size:15px;
+    line-height:1.5;
+    font-weight:800;
+}
+
+/* ---------- FOOTER ---------- */
+
+.footer{
+    margin-top:22px;
+    color:#aaa;
+    text-align:center;
+    font-size:11px;
+}
+
+/* ---------- ANIMATIONS ---------- */
+
+@keyframes cardIn{
+    from{opacity:0;transform:translateY(25px) scale(.97)}
+    to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@keyframes float{
+    0%,100%{transform:translateY(0) rotate(0)}
+    50%{transform:translateY(-5px) rotate(1deg)}
+}
+
+@keyframes successIn{
+    from{opacity:0;transform:translateY(18px) scale(.97)}
+    to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@keyframes shake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-5px)}
+    75%{transform:translateX(5px)}
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:620px){
+    body{
+        min-height:100svh;
+        align-items:flex-start;
+        padding:82px 12px 20px;
+    }
+
+    .language-switcher{
+        top:13px;
+        right:13px;
+    }
+
+    .card{
+        padding:28px 18px 22px;
+        border-radius:24px;
+    }
+
+    .logo{
+        width:64px;
+        height:64px;
+        border-radius:20px;
+        font-size:27px;
+    }
+
+    .badge{
+        font-size:11px;
+    }
+
+    .subtitle{
+        font-size:14px;
+    }
+
+    .contact-grid{
+        grid-template-columns:1fr;
+        gap:0;
+    }
+
+    .star{
+        font-size:34px;
+    }
+
+    .footer{
+        margin-top:18px;
+    }
+}
+
+@media(prefers-reduced-motion:reduce){
+    *,
+    *::before,
+    *::after{
+        animation:none !important;
+        transition:none !important;
+        scroll-behavior:auto !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="language-switcher" aria-label="Language">
+    <button class="lang-btn" data-lang="ua">UA</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+    <button class="lang-btn active" data-lang="ru">RU</button>
+</div>
+
+<main class="card">
+<div class="content">
+
+    <header class="header">
+
+        <div class="logo">
+            <i class="fa-solid fa-utensils"></i>
+        </div>
+
+        <div class="badge">
+            <i class="fa-solid fa-circle"></i>
+            <span data-i18n="badge">Официальная обратная связь</span>
+        </div>
+
+        <h1 data-i18n="title">Отзывы о Шеф-ИИ 🍳</h1>
+
+        <p class="subtitle" id="pageSubtitle" data-i18n="subtitle">
+            Расскажите, что вам понравилось, предложите идею или сообщите о проблеме.
+            Ваш отзыв помогает нам делать бота лучше.
+        </p>
+
+    </header>
+
+    <form id="feedbackForm"
+          action="https://formspree.io/f/xqernqqv"
+          method="POST">
+
+        <div class="field">
+            <label>
+                <i class="fa-solid fa-user"></i>
+                <span data-i18n="nameLabel">Ваше имя / Юзернейм в Telegram *</span>
+            </label>
+
+            <div class="input-wrap">
+                <i class="fa-solid fa-at"></i>
+                <input
+                    type="text"
+                    name="Имя"
+                    id="name"
+                    required
+                    data-i18n-placeholder="namePlaceholder"
+                    placeholder="@username или Иван">
+            </div>
+        </div>
+
+        <div class="contact-grid">
+
+            <div class="field">
+                <label>
+                    <i class="fa-solid fa-phone"></i>
+                    <span data-i18n="phoneLabel">Телефон</span>
+                </label>
+
+                <div class="input-wrap phone-wrap">
+                    <i class="fa-solid fa-phone"></i>
+                    <span class="phone-prefix">+380</span>
+                    <input
+                        type="tel"
+                        id="phone"
+                        inputmode="numeric"
+                        autocomplete="tel-national"
+                        maxlength="9"
+                        data-i18n-placeholder="phonePlaceholder"
+                        placeholder="99 000-00-00"
+                        aria-label="Номер телефону">
+                    <input type="hidden" name="Телефон" id="phoneFull">
+                </div>
+            </div>
+
+            <div class="field">
+                <label>
+                    <i class="fa-solid fa-envelope"></i>
+                    <span data-i18n="emailLabel">Email</span>
+                </label>
+
+                <div class="input-wrap">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input
+                        type="email"
+                        name="Email"
+                        id="email"
+                        data-i18n-placeholder="emailPlaceholder"
+                        placeholder="Например, ivan@example.com">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="note">
+            <i class="fa-solid fa-circle-info"></i>
+            <span data-i18n="contactNote">
+                Если хотите, чтобы с вами связались, оставьте номер или почту и опишите проблему.
+            </span>
+        </div>
+
+        <div class="rating-box">
+            <label class="rating-title">
+                <i class="fa-solid fa-star"></i>
+                <span data-i18n="ratingLabel">Оценка бота *</span>
+            </label>
+
+            <div class="stars" role="radiogroup" aria-label="Rating">
+                <button type="button" class="star" data-value="1" aria-label="1">★</button>
+                <button type="button" class="star" data-value="2" aria-label="2">★</button>
+                <button type="button" class="star" data-value="3" aria-label="3">★</button>
+                <button type="button" class="star" data-value="4" aria-label="4">★</button>
+                <button type="button" class="star" data-value="5" aria-label="5">★</button>
+            </div>
+
+            <div class="rating-hint" id="ratingHint" data-i18n="ratingHint">
+                Выберите оценку от 1 до 5
+            </div>
+
+            <input type="hidden" name="Оценка" id="rating">
+        </div>
+
+        <div class="field">
+            <label>
+                <i class="fa-solid fa-message"></i>
+                <span data-i18n="messageLabel">Ваш отзыв или предложение *</span>
+            </label>
+
+            <textarea
+                name="Отзыв"
+                id="message"
+                required
+                data-i18n-placeholder="messagePlaceholder"
+                placeholder="Напишите здесь ваш отзыв..."></textarea>
+        </div>
+
+        <div class="error" id="error" data-i18n="error">
+            Пожалуйста, заполните все обязательные поля и выберите оценку.
+        </div>
+
+        <button class="submit" type="submit">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span data-i18n="submit">Отправить отзыв</span>
+        </button>
+
+    </form>
+
+    <section class="success" id="success">
+        <div class="success-icon">
+            <i class="fa-solid fa-check"></i>
+        </div>
+
+        <p class="success-message" data-i18n="successText">
+            Спасибо за ваш отзыв!<br>
+            Мы обязательно его просмотрим. ❤️
+        </p>
+
+        <p class="contact-success" id="contactSuccess" data-i18n="contactSuccess">
+            Мы с вами обязательно свяжемся.
+        </p>
+    </section>
+
+    <div class="footer" data-i18n="footer">
+        Шеф-ИИ · Обратная связь
+    </div>
+
+</div>
+</main>
+
+<script>
+const translations = {
+    ru:{
+        pageTitle:"Отзывы — Шеф-ИИ",
+        badge:"Официальная обратная связь",
+        title:"Отзывы о Шеф-ИИ 🍳",
+        subtitle:"Расскажите, что вам понравилось, предложите идею или сообщите о проблеме. Ваш отзыв помогает нам делать бота лучше.",
+        nameLabel:"Ваше имя / Юзернейм в Telegram *",
+        namePlaceholder:"@username или Иван",
+        phoneLabel:"Телефон",
+        phonePlaceholder:"99 000-00-00",
+        emailLabel:"Email",
+        emailPlaceholder:"Например, ivan@example.com",
+        contactNote:"Если хотите, чтобы с вами связались, оставьте номер или почту и опишите проблему.",
+        ratingLabel:"Оценка бота *",
+        ratingHint:"Выберите оценку от 1 до 5",
+        ratingSelected:"Ваша оценка: ",
+        messageLabel:"Ваш отзыв или предложение *",
+        messagePlaceholder:"Напишите здесь ваш отзыв...",
+        error:"Пожалуйста, заполните все обязательные поля и выберите оценку.",
+        submit:"Отправить отзыв",
+        successText:"Спасибо за ваш отзыв!<br>Мы обязательно его просмотрим. ❤️",
+        contactSuccess:"Мы с вами обязательно свяжемся.",
+        footer:"Шеф-ИИ · Обратная связь",
+        sendError:"Не удалось отправить отзыв. Попробуйте ещё раз.",
+        connectionError:"Ошибка соединения. Проверьте интернет и попробуйте ещё раз."
+    },
+
+    ua:{
+        pageTitle:"Відгуки — Шеф-ШІ",
+        badge:"Офіційний зворотний зв'язок",
+        title:"Відгуки про Шеф-ШІ 🍳",
+        subtitle:"Розкажіть, що вам сподобалося, запропонуйте ідею або повідомте про проблему. Ваш відгук допомагає нам робити бота кращим.",
+        nameLabel:"Ваше ім'я / Юзернейм у Telegram *",
+        namePlaceholder:"@username або Іван",
+        phoneLabel:"Телефон",
+        phonePlaceholder:"99 000-00-00",
+        emailLabel:"Email",
+        emailPlaceholder:"Наприклад, ivan@example.com",
+        contactNote:"Якщо хочете, щоб з вами зв'язалися, залиште номер або пошту та опишіть проблему.",
+        ratingLabel:"Оцінка бота *",
+        ratingHint:"Оберіть оцінку від 1 до 5",
+        ratingSelected:"Ваша оцінка: ",
+        messageLabel:"Ваш відгук або пропозиція *",
+        messagePlaceholder:"Напишіть тут свій відгук...",
+        error:"Будь ласка, заповніть усі обов'язкові поля та виберіть оцінку.",
+        submit:"Надіслати відгук",
+        successText:"Дякуємо за ваш відгук!<br>Ми обов'язково його переглянемо. ❤️",
+        contactSuccess:"Ми з вами обов'язково зв'яжемося.",
+        footer:"Шеф-ШІ · Зворотний зв'язок",
+        sendError:"Не вдалося надіслати відгук. Спробуйте ще раз.",
+        connectionError:"Помилка з'єднання. Перевірте інтернет і спробуйте ще раз."
+    },
+
+    en:{
+        pageTitle:"Reviews — AI Chef",
+        badge:"Official feedback",
+        title:"Reviews about AI Chef 🍳",
+        subtitle:"Tell us what you liked, suggest an idea or report a problem. Your feedback helps us make the bot better.",
+        nameLabel:"Your name / Telegram username *",
+        namePlaceholder:"@username or John",
+        phoneLabel:"Phone",
+        phonePlaceholder:"99 000-00-00",
+        emailLabel:"Email",
+        emailPlaceholder:"For example, john@example.com",
+        contactNote:"If you want us to contact you, leave your phone number or email and describe the problem.",
+        ratingLabel:"Rate the bot *",
+        ratingHint:"Choose a rating from 1 to 5",
+        ratingSelected:"Your rating: ",
+        messageLabel:"Your review or suggestion *",
+        messagePlaceholder:"Write your review here...",
+        error:"Please fill in all required fields and select a rating.",
+        submit:"Send review",
+        successText:"Thank you for your review!<br>We will definitely review it. ❤️",
+        contactSuccess:"We will definitely contact you.",
+        footer:"AI Chef · Feedback",
+        sendError:"The review could not be sent. Please try again.",
+        connectionError:"Connection error. Check your internet connection and try again."
+    }
+};
+
+let currentLang = localStorage.getItem("aiChefLanguage") || "ru";
+
+const form = document.getElementById("feedbackForm");
+const errorBox = document.getElementById("error");
+const success = document.getElementById("success");
+const rating = document.getElementById("rating");
+const ratingHint = document.getElementById("ratingHint");
+const stars = [...document.querySelectorAll(".star")];
+
+function setLanguage(lang){
+    if(!translations[lang]) lang = "ru";
+    currentLang = lang;
+
+    const t = translations[lang];
+
+    document.documentElement.lang = lang === "ua" ? "uk" : lang;
+    document.title = t.pageTitle;
+
+    document.querySelectorAll("[data-i18n]").forEach(el=>{
+        const key = el.dataset.i18n;
+        if(t[key] !== undefined) el.innerHTML = t[key];
+    });
+
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+        const key = el.dataset.i18nPlaceholder;
+        if(t[key] !== undefined) el.placeholder = t[key];
+    });
+
+    document.querySelectorAll(".lang-btn").forEach(btn=>{
+        btn.classList.toggle("active",btn.dataset.lang === lang);
+    });
+
+    updateRatingHint();
+
+    localStorage.setItem("aiChefLanguage",lang);
+}
+
+function updateRatingHint(){
+    const t = translations[currentLang];
+
+    if(rating.value){
+        ratingHint.textContent = t.ratingSelected + rating.value + "/5";
+    }else{
+        ratingHint.textContent = t.ratingHint;
+    }
+}
+
+document.querySelectorAll(".lang-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>setLanguage(btn.dataset.lang));
+});
+
+
+const phoneInput = document.getElementById("phone");
+const phoneFull = document.getElementById("phoneFull");
+
+phoneInput.addEventListener("input", () => {
+    let digits = phoneInput.value.replace(/\D/g, "").slice(0, 9);
+
+    let formatted = "";
+    if (digits.length > 0) formatted += digits.slice(0, 2);
+    if (digits.length > 2) formatted += " " + digits.slice(2, 5);
+    if (digits.length > 5) formatted += "-" + digits.slice(5, 7);
+    if (digits.length > 7) formatted += "-" + digits.slice(7, 9);
+
+    phoneInput.value = formatted;
+    phoneFull.value = digits ? "+380" + digits : "";
+});
+
+stars.forEach(star=>{
+    star.addEventListener("click",()=>{
+        const value = Number(star.dataset.value);
+        rating.value = value;
+
+        stars.forEach(s=>{
+            s.classList.toggle("active",Number(s.dataset.value) <= value);
+        });
+
+        updateRatingHint();
+    });
+});
+
+form.addEventListener("submit",async e=>{
+    e.preventDefault();
+
+    errorBox.style.display = "none";
+
+    const name = document.getElementById("name").value.trim();
+    const message = document.getElementById("message").value.trim();
+
+    if(!name || !message || !rating.value){
+        errorBox.style.display = "block";
+        return;
+    }
+
+    const submitButton = form.querySelector(".submit");
+    const originalButton = submitButton.innerHTML;
+
+    submitButton.disabled = true;
+    submitButton.style.opacity = ".7";
+    submitButton.innerHTML =
+        '<i class="fa-solid fa-spinner fa-spin"></i><span>' +
+        (currentLang === "ru" ? "Отправляем..." :
+         currentLang === "ua" ? "Надсилаємо..." : "Sending...") +
+        '</span>';
+
+    try{
+        const response = await fetch(form.action,{
+            method:"POST",
+            body:(() => { const data = new FormData(form); data.set("Телефон", phoneFull.value); return data; })(),
+            headers:{Accept:"application/json"}
+        });
+
+        if(response.ok){
+            const phoneValue = document.getElementById("phoneFull").value.trim();
+            const emailValue = document.getElementById("email").value.trim();
+            const contactSuccess = document.getElementById("contactSuccess");
+
+            form.style.display = "none";
+
+            const pageSubtitle = document.getElementById("pageSubtitle");
+            if(pageSubtitle) pageSubtitle.style.display = "none";
+
+            if(contactSuccess){
+                contactSuccess.style.display =
+                    (phoneValue || emailValue) ? "block" : "none";
+            }
+
+            success.style.display = "block";
+        }else{
+            alert(translations[currentLang].sendError);
+            submitButton.disabled = false;
+            submitButton.style.opacity = "1";
+            submitButton.innerHTML = originalButton;
+        }
+    }catch(err){
+        alert(translations[currentLang].connectionError);
+        submitButton.disabled = false;
+        submitButton.style.opacity = "1";
+        submitButton.innerHTML = originalButton;
+    }
+});
+
+setLanguage(currentLang);
+</script>
+
+</body>
+</html>
